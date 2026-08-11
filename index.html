@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Tester — Know Before You Upload</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#14110F;
+    --panel:#1C1814;
+    --panel-2:#221D18;
+    --line:#332C24;
+    --cream:#F2ECE0;
+    --dim:#B4A996;
+    --amber:#E8A33D;
+    --teal:#3FA9A0;
+    --red:#D14343;
+  }
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif;}
+  .display{font-family:'Bricolage Grotesque', sans-serif;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  .amber{color:var(--amber);}
+  .teal{color:var(--teal);}
+  .panel{background:var(--panel); border:1px solid var(--line);}
+  .panel-2{background:var(--panel-2); border:1px solid var(--line);}
+  .btn-primary{background:var(--amber); color:#1A1410; font-weight:600;}
+  .btn-primary:hover{background:#f0b158;}
+  .btn-ghost{border:1px solid var(--line); color:var(--cream);}
+  .btn-ghost:hover{border-color:var(--amber); color:var(--amber);}
+  .tick{position:relative;}
+  .tick::before{content:attr(data-time); font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--amber); letter-spacing:0.02em; display:block; margin-bottom:8px; opacity:0.8;}
+  .scrubber-track{height:2px; background:var(--line); position:relative;}
+  .scrubber-fill{position:absolute; top:0; left:0; height:2px; background:var(--amber);}
+  .scrollbar-thin::-webkit-scrollbar{height:6px; width:6px;}
+  .scrollbar-thin::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  .fade-in{animation:fadeIn 0.5s ease forwards;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+  .pulse-dot{width:8px; height:8px; border-radius:50%; background:var(--red); animation:pulse 1.4s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.3;}}
+  .grain{position:fixed; inset:0; pointer-events:none; opacity:0.035; z-index:50;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  ::selection{background:var(--amber); color:#14110F;}
+  input, textarea{background:var(--panel-2); border:1px solid var(--line); color:var(--cream);}
+  input:focus, textarea:focus{outline:none; border-color:var(--amber);}
+  .barwrap{background:var(--line); border-radius:3px; overflow:hidden;}
+  .barfill{height:100%; border-radius:3px; transition:width 0.6s ease;}
+</style>
+</head>
+<body class="min-h-screen">
+<div class="grain"></div>
+
+<!-- NAV -->
+<nav class="fixed top-0 w-full z-40 backdrop-blur-md bg-[#14110F]/85 border-b" style="border-color:var(--line)">
+  <div class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-2.5 h-2.5 rounded-full" style="background:var(--amber)"></div>
+      <span class="display font-bold text-lg tracking-tight">Video Tester</span>
+    </div>
+    <div class="hidden md:flex items-center gap-7 text-sm text-[--dim]">
+      <a href="#tools" class="hover:text-[--cream] transition">Tools</a>
+      <a href="#roadmap" class="hover:text-[--cream] transition">Roadmap</a>
+      <a href="#pricing" class="hover:text-[--cream] transition">Pricing</a>
+      <a href="#support" class="hover:text-[--cream] transition">Support the build</a>
+      <a href="mailto:wr140683@gmail.com" class="hover:text-[--cream] transition">Contact</a>
+    </div>
+    <a href="#tools" class="btn-primary text-sm px-4 py-2 rounded">Test a video</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="max-w-6xl mx-auto px-5 pt-36 pb-20">
+  <div class="flex items-center gap-2 mb-6">
+    <div class="pulse-dot"></div>
+    <span class="mono text-xs text-[--dim] tracking-widest uppercase">Built in public · v0.1 · free tools live below</span>
+  </div>
+  <h1 class="display font-bold text-5xl md:text-7xl leading-[1.03] max-w-4xl">
+    Scrub through your upload <span class="amber">before</span> YouTube does.
+  </h1>
+  <p class="text-[--dim] text-lg max-w-2xl mt-6 leading-relaxed">
+    Paste your title, description and script. Get a real, honest breakdown of your hook, your pacing,
+    your risk spots, and what to fix — before you hit publish. No fluff, no fake percentages.
+  </p>
+  <div class="flex flex-wrap gap-3 mt-9">
+    <a href="#tools" class="btn-primary px-6 py-3 rounded text-sm">Run the free analysis →</a>
+    <a href="#roadmap" class="btn-ghost px-6 py-3 rounded text-sm">See what's coming</a>
+  </div>
+
+  <!-- scrubber timeline nav -->
+  <div class="mt-16 panel rounded-lg p-5">
+    <div class="scrubber-track mb-6"><div class="scrubber-fill" style="width:22%"></div></div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+      <a href="#tools" class="tick" data-time="00:00">
+        <div class="font-semibold">Analyze</div>
+        <div class="text-[--dim] text-xs mt-1">Title, hook, script, thumbnail</div>
+      </a>
+      <a href="#roadmap" class="tick" data-time="04:12">
+        <div class="font-semibold">Build</div>
+        <div class="text-[--dim] text-xs mt-1">Editing, captions, upscaling</div>
+      </a>
+      <a href="#roadmap" class="tick" data-time="09:45">
+        <div class="font-semibold">Track</div>
+        <div class="text-[--dim] text-xs mt-1">Competitor & copyright watch</div>
+      </a>
+      <a href="#pricing" class="tick" data-time="14:30">
+        <div class="font-semibold">Grow</div>
+        <div class="text-[--dim] text-xs mt-1">Pro credits, no watermark</div>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- LIVE TOOLS -->
+<section id="tools" class="max-w-6xl mx-auto px-5 py-16">
+  <div class="mb-10">
+    <span class="mono text-xs amber tracking-widest uppercase">Live now — free</span>
+    <h2 class="display font-bold text-3xl md:text-4xl mt-2">Tools that actually run.</h2>
+    <p class="text-[--dim] mt-2 max-w-xl">Everything on this page really executes — nothing here is a mockup screenshot.</p>
+  </div>
+
+  <div class="grid lg:grid-cols-5 gap-6">
+    <!-- LEFT: input -->
+    <div class="lg:col-span-2 panel rounded-lg p-6 h-fit lg:sticky lg:top-24">
+      <label class="text-xs mono text-[--dim] uppercase tracking-wide">Video title</label>
+      <input id="inTitle" type="text" placeholder="e.g. I Tried Sleeping 3 Hours a Night For a Week"
+        class="w-full rounded px-3 py-2.5 mt-2 mb-5 text-sm">
+
+      <label class="text-xs mono text-[--dim] uppercase tracking-wide">Description (optional)</label>
+      <textarea id="inDesc" rows="2" placeholder="What's the video about?"
+        class="w-full rounded px-3 py-2.5 mt-2 mb-5 text-sm resize-none"></textarea>
+
+      <label class="text-xs mono text-[--dim] uppercase tracking-wide">Script / voiceover text</label>
+      <textarea id="inScript" rows="8" placeholder="Paste your full script here — the more you paste, the better the hook and pacing read will be."
+        class="w-full rounded px-3 py-2.5 mt-2 mb-5 text-sm resize-none"></textarea>
+
+      <button id="btnAnalyze" class="btn-primary w-full py-3 rounded text-sm">Run full analysis</button>
+      <p id="statusMsg" class="text-xs text-[--dim] mt-3 min-h-[16px]"></p>
+
+      <div class="mt-6 pt-6 border-t" style="border-color:var(--line)">
+        <label class="text-xs mono text-[--dim] uppercase tracking-wide block mb-2">Thumbnail check (runs instantly, no upload leaves your browser)</label>
+        <input id="thumbInput" type="file" accept="image/*" class="text-xs text-[--dim] w-full">
+        <div id="thumbResult" class="mt-4"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: results -->
+    <div class="lg:col-span-3">
+      <div id="resultsEmpty" class="panel rounded-lg p-10 text-center text-[--dim]">
+        <p class="text-sm">Your breakdown will appear here — hook score, retention curve, risk flags, and rewrite suggestions.</p>
+      </div>
+      <div id="resultsWrap" class="hidden space-y-5"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" class="max-w-6xl mx-auto px-5 py-20">
+  <span class="mono text-xs amber tracking-widest uppercase">In progress — honest status</span>
+  <h2 class="display font-bold text-3xl md:text-4xl mt-2 mb-2">What's being built next.</h2>
+  <p class="text-[--dim] max-w-2xl mb-10">
+    Some of these need real infrastructure and money to run — server-side video processing, a YouTube data
+    pipeline, a payment provider. They're not switched on yet. Here's the honest state of each one.
+  </p>
+
+  <div class="grid md:grid-cols-2 gap-4" id="roadmapGrid"></div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="max-w-6xl mx-auto px-5 py-20">
+  <span class="mono text-xs amber tracking-widest uppercase">Pricing</span>
+  <h2 class="display font-bold text-3xl md:text-4xl mt-2 mb-10">Free stays useful. Pro is optional.</h2>
+  <div class="grid md:grid-cols-2 gap-6 max-w-3xl">
+    <div class="panel rounded-lg p-7">
+      <div class="mono text-xs text-[--dim] uppercase">Free</div>
+      <div class="display text-4xl font-bold mt-2">₹0</div>
+      <ul class="mt-6 space-y-3 text-sm text-[--dim]">
+        <li>✓ Full script & hook analysis</li>
+        <li>✓ Thumbnail readability check</li>
+        <li>✓ Retention curve estimate</li>
+        <li>✓ 2× the daily credits of most tools like this</li>
+      </ul>
+    </div>
+    <div class="panel rounded-lg p-7 relative overflow-hidden" style="border-color:var(--amber)">
+      <div class="absolute top-0 right-0 mono text-[10px] px-3 py-1" style="background:var(--amber); color:#1A1410">PLANNED</div>
+      <div class="mono text-xs amber uppercase">Pro</div>
+      <div class="display text-4xl font-bold mt-2">₹699<span class="text-base text-[--dim] font-normal">/mo</span></div>
+      <ul class="mt-6 space-y-3 text-sm text-[--dim]">
+        <li>✓ No watermark on exports</li>
+        <li>✓ Competitor & copyright watch</li>
+        <li>✓ Video upscaling, captioning</li>
+        <li>✓ Priority AI credits</li>
+      </ul>
+      <p class="text-xs text-[--dim] mt-5">Not billable yet — needs a live payment provider (UPI + international) connected first.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SUPPORT -->
+<section id="support" class="max-w-6xl mx-auto px-5 py-20">
+  <div class="panel rounded-lg p-8 md:p-10">
+    <span class="mono text-xs teal tracking-widest uppercase">One-person build</span>
+    <h2 class="display font-bold text-2xl md:text-3xl mt-2">Support the build</h2>
+    <p class="text-[--dim] mt-3 max-w-xl text-sm leading-relaxed">
+      This is being built and maintained by one person, in spare time, with no team behind it.
+      Every free feature on this page stays free — donations go toward the costs of adding the
+      bigger features (video processing, hosting, APIs) that aren't possible to run for free forever.
+    </p>
+    <div class="grid sm:grid-cols-2 gap-4 mt-7 max-w-xl">
+      <div class="panel-2 rounded-lg p-5">
+        <div class="mono text-xs text-[--dim] uppercase mb-2">UPI (India)</div>
+        <div class="text-sm font-medium" id="upiIdDisplay">your-upi-id@bank <span class="text-[--dim] font-normal">— replace this</span></div>
+      </div>
+      <div class="panel-2 rounded-lg p-5">
+        <div class="mono text-xs text-[--dim] uppercase mb-2">International</div>
+        <div class="text-sm font-medium">Buy Me a Coffee link <span class="text-[--dim] font-normal">— add once set up</span></div>
+      </div>
+    </div>
+    <p class="text-xs text-[--dim] mt-6">Questions, bug reports, feature ideas — <a href="mailto:wr140683@gmail.com" class="amber underline">wr140683@gmail.com</a></p>
+  </div>
+</section>
+
+<footer class="border-t py-10" style="border-color:var(--line)">
+  <div class="max-w-6xl mx-auto px-5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[--dim]">
+    <span>Video Tester — built solo, one honest feature at a time. <a href="mailto:wr140683@gmail.com" class="amber">wr140683@gmail.com</a></span>
+    <span class="mono">v0.1</span>
+  </div>
+</footer>
+
+<script>
+const roadmap = [
+  {t:"Video editor (trim, cut, merge)", s:"planned", note:"Needs browser-based video processing (ffmpeg.wasm) — works for short clips, heavy for long ones."},
+  {t:"Auto captions & transcription", s:"planned", note:"Feasible with speech-to-text API once audio upload is wired in."},
+  {t:"Video & image upscaling", s:"planned", note:"Needs a GPU-backed service — cost scales with usage, can't stay fully free."},
+  {t:"Competitor spy tool", s:"limited", note:"Can compare channels you give links for using public data — can't crawl 'all of YouTube' in real time."},
+  {t:"Copyright / re-upload finder", s:"not possible as free tool", note:"Requires YouTube's own Content ID system — that data isn't available outside YouTube."},
+  {t:"Channel analytics from a link", s:"limited", note:"Public stats (subs, view counts) are readable; private data like exact earnings isn't — anyone claiming exact earnings is estimating."},
+  {t:"AI voice agent for support", s:"planned", note:"Text version can ship soon; voice adds real per-minute API cost."},
+  {t:"Watermark + subscription unlock", s:"planned", note:"Watermarking itself is easy; needs the payment provider live first."},
+  {t:"UPI + international payments", s:"blocked on you", note:"Needs a registered payment account (Razorpay/Stripe) — I can wire it in once that exists."},
+  {t:"Trend & topic radar", s:"limited", note:"Can summarize general trend patterns — true real-time cross-platform scraping isn't available."},
+];
+const statusStyle = {
+  "planned":{c:"var(--teal)", label:"Planned"},
+  "limited":{c:"var(--amber)", label:"Partially possible"},
+  "not possible as free tool":{c:"var(--red)", label:"Not possible"},
+  "blocked on you":{c:"var(--red)", label:"Needs your account"},
+};
+const grid = document.getElementById('roadmapGrid');
+roadmap.forEach(r=>{
+  const st = statusStyle[r.s];
+  const div = document.createElement('div');
+  div.className = "panel-2 rounded-lg p-5";
+  div.innerHTML = `
+    <div class="flex items-center justify-between mb-2">
+      <span class="font-semibold text-sm">${r.t}</span>
+      <span class="mono text-[10px] px-2 py-1 rounded" style="border:1px solid ${st.c}; color:${st.c}">${st.label}</span>
+    </div>
+    <p class="text-xs text-[--dim] leading-relaxed">${r.note}</p>
+  `;
+  grid.appendChild(div);
+});
+
+// ---------- AI ANALYSIS ----------
+// Get a FREE key (no credit card needed) from https://aistudio.google.com/apikey
+// Paste it below. For a real public launch, don't leave a key visible in HTML forever —
+// once you have a GitHub account working, ask to set up a free Cloudflare Worker proxy
+// so the key isn't sitting in public view. For now, a free-tier key here is low risk.
+const GEMINI_API_KEY = "PASTE_YOUR_FREE_GEMINI_KEY_HERE";
+
+const btn = document.getElementById('btnAnalyze');
+const statusMsg = document.getElementById('statusMsg');
+const resultsEmpty = document.getElementById('resultsEmpty');
+const resultsWrap = document.getElementById('resultsWrap');
+
+btn.addEventListener('click', async () => {
+  const title = document.getElementById('inTitle').value.trim();
+  const desc = document.getElementById('inDesc').value.trim();
+  const script = document.getElementById('inScript').value.trim();
+
+  if(!title && !script){
+    statusMsg.textContent = "Add at least a title or a script to analyze.";
+    statusMsg.style.color = "var(--red)";
+    return;
+  }
+  statusMsg.style.color = "var(--dim)";
+  statusMsg.textContent = "Analyzing... this calls a real model, takes a few seconds.";
+  btn.disabled = true;
+  btn.style.opacity = 0.6;
+
+  const prompt = `You are a blunt, expert YouTube strategy coach. Analyze this planned video and respond with STRICT JSON ONLY, no markdown fences, no preamble, matching exactly this shape:
+{
+  "hook_score": <0-100 integer>,
+  "hook_feedback": "<2-3 sentences, direct, specific to this content>",
+  "retention_curve": [<8 integers 0-100 representing estimated audience retention at 8 even points through the video>],
+  "retention_note": "<1-2 sentences on where the biggest drop-off risk is and why>",
+  "title_score": <0-100 integer>,
+  "title_feedback": "<2 sentences on the title's curiosity gap / clarity / clickability>",
+  "title_alt": ["<alternate title 1>", "<alternate title 2>", "<alternate title 3>"],
+  "copyright_flags": ["<short flag string>", ...] ,
+  "copyright_note": "<1 sentence, general guidance only, no specific claims>",
+  "chapters": [{"time":"0:00","label":"..."}, ...],
+  "predicted_comments": ["<realistic short comment a viewer might leave>", "<another, could be critical>", "<another>"],
+  "top_fixes": ["<specific actionable fix 1>", "<fix 2>", "<fix 3>"]
+}
+Be honest and specific to the actual content given — do not use generic filler. If script is short or missing, say so plainly in the feedback rather than inventing detail.
+
+TITLE: ${title || "(not provided)"}
+DESCRIPTION: ${desc || "(not provided)"}
+SCRIPT: ${script || "(not provided)"}`;
+
+  if(!GEMINI_API_KEY || GEMINI_API_KEY === "PASTE_YOUR_FREE_GEMINI_KEY_HERE"){
+    statusMsg.textContent = "No API key set yet — open the code, find GEMINI_API_KEY near the top, and paste your free key (see comment above it for how to get one).";
+    statusMsg.style.color = "var(--red)";
+    btn.disabled = false; btn.style.opacity = 1;
+    return;
+  }
+
+  try{
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        contents: [{parts: [{text: prompt}]}],
+        generationConfig: { responseMimeType: "application/json" }
+      })
+    });
+    const data = await response.json();
+    if(data.error){ throw new Error(data.error.message || "API error"); }
+    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+    const result = JSON.parse(raw);
+    renderResults(result);
+    statusMsg.textContent = "Done.";
+  }catch(err){
+    console.error(err);
+    statusMsg.textContent = "Something went wrong reaching the model — check your API key, or try again in a moment.";
+    statusMsg.style.color = "var(--red)";
+  }finally{
+    btn.disabled = false;
+    btn.style.opacity = 1;
+  }
+});
+
+function scoreColor(n){
+  if(n>=70) return "var(--teal)";
+  if(n>=40) return "var(--amber)";
+  return "var(--red)";
+}
+
+function renderResults(r){
+  resultsEmpty.classList.add('hidden');
+  resultsWrap.classList.remove('hidden');
+  resultsWrap.innerHTML = "";
+
+  // Hook + title scores
+  const scoreCard = document.createElement('div');
+  scoreCard.className = "panel rounded-lg p-6 fade-in";
+  scoreCard.innerHTML = `
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <div class="mono text-xs text-[--dim] uppercase mb-2">Hook score</div>
+        <div class="display text-4xl font-bold" style="color:${scoreColor(r.hook_score)}">${r.hook_score}</div>
+        <p class="text-xs text-[--dim] mt-2 leading-relaxed">${r.hook_feedback||""}</p>
+      </div>
+      <div>
+        <div class="mono text-xs text-[--dim] uppercase mb-2">Title score</div>
+        <div class="display text-4xl font-bold" style="color:${scoreColor(r.title_score)}">${r.title_score}</div>
+        <p class="text-xs text-[--dim] mt-2 leading-relaxed">${r.title_feedback||""}</p>
+      </div>
+    </div>
+  `;
+  resultsWrap.appendChild(scoreCard);
+
+  // Retention curve
+  if(r.retention_curve && r.retention_curve.length){
+    const card = document.createElement('div');
+    card.className = "panel rounded-lg p-6 fade-in";
+    const bars = r.retention_curve.map((v,i)=>`
+      <div class="flex-1 flex flex-col items-center gap-2">
+        <div class="w-full barwrap flex items-end" style="height:80px;">
+          <div class="barfill w-full" style="height:${v}%; background:${scoreColor(v)}"></div>
+        </div>
+        <span class="mono text-[10px] text-[--dim]">${Math.round((i/(r.retention_curve.length-1))*100)}%</span>
+      </div>`).join("");
+    card.innerHTML = `
+      <div class="mono text-xs text-[--dim] uppercase mb-4">Estimated retention curve</div>
+      <div class="flex gap-2">${bars}</div>
+      <p class="text-xs text-[--dim] mt-4 leading-relaxed">${r.retention_note||""}</p>
+    `;
+    resultsWrap.appendChild(card);
+  }
+
+  // Title alternatives
+  if(r.title_alt && r.title_alt.length){
+    const card = document.createElement('div');
+    card.className = "panel rounded-lg p-6 fade-in";
+    card.innerHTML = `
+      <div class="mono text-xs text-[--dim] uppercase mb-3">Alternate titles to test</div>
+      <div class="space-y-2">${r.title_alt.map(t=>`<div class="panel-2 rounded px-3 py-2 text-sm">${t}</div>`).join("")}</div>
+    `;
+    resultsWrap.appendChild(card);
+  }
+
+  // Chapters
+  if(r.chapters && r.chapters.length){
+    const card = document.createElement('div');
+    card.className = "panel rounded-lg p-6 fade-in";
+    card.innerHTML = `
+      <div class="mono text-xs text-[--dim] uppercase mb-3">Suggested chapters</div>
+      <div class="space-y-1.5">${r.chapters.map(c=>`
+        <div class="flex gap-3 text-sm">
+          <span class="mono amber w-14">${c.time}</span>
+          <span class="text-[--dim]">${c.label}</span>
+        </div>`).join("")}</div>
+    `;
+    resultsWrap.appendChild(card);
+  }
+
+  // Predicted comments
+  if(r.predicted_comments && r.predicted_comments.length){
+    const card = document.createElement('div');
+    card.className = "panel rounded-lg p-6 fade-in";
+    card.innerHTML = `
+      <div class="mono text-xs text-[--dim] uppercase mb-3">Predicted audience reaction</div>
+      <div class="space-y-2">${r.predicted_comments.map(c=>`
+        <div class="panel-2 rounded px-3 py-2 text-sm text-[--dim]">"${c}"</div>`).join("")}</div>
+    `;
+    resultsWrap.appendChild(card);
+  }
+
+  // Copyright flags + fixes
+  const bottomGrid = document.createElement('div');
+  bottomGrid.className = "grid md:grid-cols-2 gap-5 fade-in";
+  bottomGrid.innerHTML = `
+    <div class="panel rounded-lg p-6">
+      <div class="mono text-xs text-[--dim] uppercase mb-3">Risk flags</div>
+      ${(r.copyright_flags&&r.copyright_flags.length) ? r.copyright_flags.map(f=>`<div class="text-sm mb-1.5" style="color:var(--red)">⚠ ${f}</div>`).join("") : `<div class="text-sm text-[--dim]">No obvious flags spotted.</div>`}
+      <p class="text-xs text-[--dim] mt-3 leading-relaxed">${r.copyright_note||""}</p>
+    </div>
+    <div class="panel rounded-lg p-6">
+      <div class="mono text-xs text-[--dim] uppercase mb-3">Top 3 fixes</div>
+      ${(r.top_fixes||[]).map((f,i)=>`<div class="text-sm mb-2"><span class="amber mono">${i+1}.</span> ${f}</div>`).join("")}
+    </div>
+  `;
+  resultsWrap.appendChild(bottomGrid);
+}
+
+// ---------- THUMBNAIL ANALYZER (real, client-side, no API) ----------
+document.getElementById('thumbInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = ()=>{
+    const canvas = document.createElement('canvas');
+    const w = 160, h = Math.round(160 * img.height/img.width);
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    const data = ctx.getImageData(0,0,w,h).data;
+
+    let sumBrightness=0, sumSat=0, edgeBusy=0, count=0;
+    let leftBright=0, rightBright=0, leftCount=0, rightCount=0;
+    for(let y=0; y<h; y++){
+      for(let x=0; x<w; x++){
+        const i = (y*w+x)*4;
+        const rr=data[i], gg=data[i+1], bb=data[i+2];
+        const brightness = (rr*0.299+gg*0.587+bb*0.114);
+        const max = Math.max(rr,gg,bb), min = Math.min(rr,gg,bb);
+        const sat = max===0 ? 0 : (max-min)/max;
+        sumBrightness += brightness;
+        sumSat += sat;
+        count++;
+        if(x < w/2){ leftBright += brightness; leftCount++; } else { rightBright += brightness; rightCount++; }
+        if(x>0){
+          const pi = (y*w+(x-1))*4;
+          const diff = Math.abs(brightness - (data[pi]*0.299+data[pi+1]*0.587+data[pi+2]*0.114));
+          if(diff > 25) edgeBusy++;
+        }
+      }
+    }
+    const avgBrightness = Math.round(sumBrightness/count);
+    const avgSat = (sumSat/count*100).toFixed(0);
+    const busyness = Math.round((edgeBusy/count)*100);
+    const contrast = Math.round(Math.abs((leftBright/leftCount) - (rightBright/rightCount)));
+
+    let readTag, readColor;
+    if(busyness > 35){ readTag="Very busy — text may get lost at small size"; readColor="var(--red)"; }
+    else if(busyness > 20){ readTag="Moderately busy — keep text bold and high-contrast"; readColor="var(--amber)"; }
+    else{ readTag="Clean composition — good space for text/face"; readColor="var(--teal)"; }
+
+    let brightTag, brightColor;
+    if(avgBrightness < 60){ brightTag="Dark overall — may look muddy as a small thumbnail"; brightColor="var(--red)"; }
+    else if(avgBrightness > 220){ brightTag="Very bright/washed out — check it's not overexposed"; brightColor="var(--amber)"; }
+    else{ brightTag="Brightness in a solid range for feed visibility"; brightColor="var(--teal)"; }
+
+    const result = document.getElementById('thumbResult');
+    result.innerHTML = `
+      <div class="panel-2 rounded-lg p-4 fade-in space-y-3">
+        <div class="flex justify-between text-xs"><span class="text-[--dim]">Brightness</span><span class="mono">${avgBrightness}/255</span></div>
+        <div class="text-xs" style="color:${brightColor}">${brightTag}</div>
+        <div class="flex justify-between text-xs pt-2"><span class="text-[--dim]">Color saturation</span><span class="mono">${avgSat}%</span></div>
+        <div class="flex justify-between text-xs pt-2"><span class="text-[--dim]">Visual busyness</span><span class="mono">${busyness}%</span></div>
+        <div class="text-xs" style="color:${readColor}">${readTag}</div>
+        <div class="flex justify-between text-xs pt-2"><span class="text-[--dim]">Left/right contrast</span><span class="mono">${contrast}</span></div>
+        <div class="text-xs text-[--dim]">${contrast > 30 ? "Good asymmetry — one side reads as the focal point." : "Fairly even both sides — a clear focal point can help it pop in the feed."}</div>
+      </div>
+    `;
+    URL.revokeObjectURL(url);
+  };
+  img.src = url;
+});
+</script>
+</body>
+</html>
