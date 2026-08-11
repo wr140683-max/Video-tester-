@@ -268,7 +268,7 @@ roadmap.forEach(r=>{
 // Paste it below. For a real public launch, don't leave a key visible in HTML forever —
 // once you have a GitHub account working, ask to set up a free Cloudflare Worker proxy
 // so the key isn't sitting in public view. For now, a free-tier key here is low risk.
-const GEMINI_API_KEY = "AQ.Ab8RN6JUxo88Oc1Qgskew3f8mrqan1R8HcFxB11QxeRpnEDLfA";
+const GEMINI_API_KEY = "PASTE_YOUR_FREE_GEMINI_KEY_HERE";
 
 const btn = document.getElementById('btnAnalyze');
 const statusMsg = document.getElementById('statusMsg');
@@ -319,9 +319,12 @@ SCRIPT: ${script || "(not provided)"}`;
   }
 
   try{
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": GEMINI_API_KEY
+      },
       body: JSON.stringify({
         contents: [{parts: [{text: prompt}]}],
         generationConfig: { responseMimeType: "application/json" }
